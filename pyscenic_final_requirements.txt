@@ -1,0 +1,35 @@
+# pySCENIC Final Working Environment
+# Created: September 25, 2025
+# HPC: Sol cluster at ASU
+# CRITICAL: Requires module load gcc-11.2.0-gcc-8.5.0
+
+# Core pySCENIC
+pyscenic==0.12.1
+
+# Scientific stack - MUST be these versions for GLIBCXX_3.4.29 compatibility
+numpy==1.23.5
+scipy==1.9.3
+pandas==2.0.3
+numba==0.56.4
+llvmlite==0.39.1
+
+# Visualization - MUST be 3.5.0 for CXXABI compatibility
+matplotlib==3.5.0
+
+# File I/O - use anndata instead of scanpy in scripts
+anndata==0.11.4
+
+# Dask stack - pinned for pySCENIC 0.12.1 compatibility
+dask==2024.2.1
+distributed==2024.2.1
+dask-expr==0.5.3
+
+# pySCENIC dependencies
+arboreto==0.1.6
+umap-learn
+pynndescent
+loompy==3.0.6
+
+# Additional utilities
+seaborn
+h5py
