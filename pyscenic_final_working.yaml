@@ -1,0 +1,51 @@
+name: pyscenic_final
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.10
+  - scanpy=1.9.8
+  - loompy=3.0.6
+  - pip
+  - pip:
+      # Core pySCENIC
+      - pyscenic==0.12.1
+      
+      # Scientific stack - CRITICAL: These specific versions work with GLIBCXX_3.4.29
+      - numpy==1.23.5
+      - scipy==1.9.3
+      - pandas==2.0.3
+      - numba==0.56.4
+      - llvmlite==0.39.1
+      
+      # AnnData for h5ad I/O (avoids matplotlib dependency issues)
+      - anndata==0.11.4
+      
+      # Dask - pinned versions for pySCENIC compatibility
+      - dask==2024.2.1
+      - distributed==2024.2.1
+      - dask-expr==0.5.3
+      
+      # pySCENIC dependencies
+      - arboreto==0.1.6
+      - umap-learn
+      - pynndescent
+
+# CRITICAL SETUP NOTES:
+# 1. This environment REQUIRES loading gcc module before use:
+#    module load gcc-11.2.0-gcc-8.5.0
+#
+# 2. The HPC system has GLIBCXX up to 3.4.29 (from gcc-11.2.0)
+#    - scipy 1.9.3: Compatible (needs ≤3.4.29)
+#    - scipy 1.10.1+: INCOMPATIBLE (needs 3.4.30)
+#    - numba 0.56.4: Compatible
+#    - numba 0.57.1+: May have issues
+#
+# 3. Use anndata instead of scanpy in scripts to avoid matplotlib C++ library conflicts
+#
+# 4. Known working for AUCell on GABAergic neurons
+#
+# 5. To recreate:
+#    conda env create -f pyscenic_final_working.yaml
+#    (Note: Some packages may need individual conda install first, then pip install the rest)
