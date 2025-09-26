@@ -5,18 +5,16 @@
 #SBATCH --time=04:00:00
 #SBATCH --mem=64G
 #SBATCH --cpus-per-task=4
+
 set -euo pipefail
 set -x
 
-# Load mamba
-module load mamba/latest
+module load gcc-11.2.0-gcc-8.5.0
 
-# Define project + python
 PROJECT_DIR="/scratch/easmit31/GRN_copy/scenic/scenic_scripts"
-PYTHON="/scratch/easmit31/conda_envs/pyscenic/bin/python"
+PYTHON="/scratch/easmit31/conda_envs/pyscenic_final/bin/python"
 
 cd "$PROJECT_DIR" || { echo "Project dir not found"; exit 1; }
-export PYTHONPATH="$PROJECT_DIR:$PYTHONPATH"
 
 # Args: H5AD1 H5AD2 --topN N --out OUT
 "$PYTHON" 97_compare_variability.py "$@"

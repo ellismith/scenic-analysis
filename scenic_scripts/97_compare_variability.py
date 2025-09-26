@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
 97_compare_variability.py
-Compare top variable regulons between two AUCell outputs (e.g., GABA vs Glut).
+Compare top variable regulons between two AUCell outputs using h5py
 """
-
 import argparse
-import scanpy as sc
+import h5py
+import numpy as np
 import pandas as pd
 
 parser = argparse.ArgumentParser(description="Compare regulon variability between two h5ad files.")
@@ -15,40 +15,48 @@ parser.add_argument("--topN", type=int, default=30, help="Number of top variable
 parser.add_argument("--out", default="regulon_variance_comparison.csv", help="Output CSV file")
 args = parser.parse_args()
 
-# --- load two AUCell h5ad outputs ---
-adata1 = sc.read_h5ad(args.h5ad1)
-adata2 = sc.read_h5ad(args.h5ad2)
+# Load regulon columns and compute variance using h5py
+def get_regulon_variances(h5ad_path):
+    with h5py.File(h5ad_path, 'r') as f:
+        reg_cols = [k for k in f['obs'].keys() if k.startswith('AUC_')]
+        variances = {}
+        for col in reg_cols:
+            vals = f['obs'][col][:]
+            variances[col] = np.var(vals)
+    return pd.Series(variances).sort_values(ascending=False)
 
-# --- identify regulon columns ---
-reg_cols1 = [c for c in adata1.obs.columns if c.startswith("Regulon")]
-reg_cols2 = [c for c in adata2.obs.columns if c.startswith("Regulon")]
-common_regs = list(set(reg_cols1) & set(reg_cols2))
+print(f"Loading {args.h5ad1}...")
+var1 = get_regulon_variances(args.h5ad1)
+print(f"Loading {args.h5ad2}...")
+var2 = get_regulon_variances(args.h5ad2)
 
-# --- compute variance for each regulon in each dataset ---
-var1 = adata1.obs[common_regs].var().sort_values(ascending=False)
-var2 = adata2.obs[common_regs].var().sort_values(ascending=False)
+# Find common regulons
+common_regs = list(set(var1.index) & set(var2.index))
+print(f"Found {len(common_regs)} common regulons")
 
-# --- rank them ---
-rank1 = var1.rank(ascending=False, method="dense").astype(int)
-rank2 = var2.rank(ascending=False, method="dense").astype(int)
+# Filter to common and rank
+var1_common = var1[common_regs].sort_values(ascending=False)
+var2_common = var2[common_regs].sort_values(ascending=False)
 
-# --- put into DataFrame for comparison ---
+rank1 = var1_common.rank(ascending=False, method="dense").astype(int)
+rank2 = var2_common.rank(ascending=False, method="dense").astype(int)
+
+# Create comparison dataframe
 df = pd.DataFrame({
-    "var1": var1,
+    "var1": var1_common,
     "rank1": rank1,
-    "var2": var2,
+    "var2": var2_common,
     "rank2": rank2,
 })
 
-# --- select top N regulons ---
-top1 = set(var1.head(args.topN).index)
-top2 = set(var2.head(args.topN).index)
+# Find top N in each
+top1 = set(var1_common.head(args.topN).index)
+top2 = set(var2_common.head(args.topN).index)
 overlap = top1 & top2
 
-print(f"Top {args.topN} in {args.h5ad1}: {len(top1)}")
-print(f"Top {args.topN} in {args.h5ad2}: {len(top2)}")
+print(f"Top {args.topN} in dataset1: {len(top1)}")
+print(f"Top {args.topN} in dataset2: {len(top2)}")
 print(f"Overlap ({len(overlap)}): {sorted(overlap)}")
 
-# --- save table ---
 df.to_csv(args.out)
 print(f"Wrote comparison table to {args.out}")
