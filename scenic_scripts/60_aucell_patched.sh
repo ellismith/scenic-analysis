@@ -6,10 +6,11 @@
 #SBATCH --mem=64G
 #SBATCH --cpus-per-task=8
 #SBATCH --partition=htc
-
 set -euo pipefail
 
-PY=/scratch/easmit31/conda_envs/pyscenic/bin/python
+module load gcc-11.2.0-gcc-8.5.0
+
+PY=/scratch/easmit31/conda_envs/pyscenic_final/bin/python
 PROJECT_DIR=/scratch/easmit31/GRN_copy/scenic/scenic_scripts
 cd "$PROJECT_DIR"
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/scratch/easmit31/conda_envs/pyscenic_v2/bin/python
 import os
 import glob
 import subprocess
@@ -10,8 +10,8 @@ def find_rebuilt_chunks(rebuilt_dir):
 
 def submit_aucell_job(rebuilt_file, regulons_csv, output_dir):
     """Submit AUCell job for a rebuilt chunk"""
-    base_name = os.path.basename(rebuilt_file).replace("_rebuilt", "")
-    aucell_output = os.path.join(output_dir, f"{base_name}_aucell.h5ad")
+    base_name = os.path.basename(rebuilt_file).replace("_rebuilt.h5ad", "_aucell.h5ad")
+    aucell_output = os.path.join(output_dir, base_name)
     
     cmd = [
         "sbatch",
@@ -23,18 +23,37 @@ def submit_aucell_job(rebuilt_file, regulons_csv, output_dir):
     return cmd, aucell_output
 
 def main():
-    if len(sys.argv) != 2:
-        print("Usage: python submit_aucell_jobs.py <rebuilt_chunks_directory>")
+    if len(sys.argv) != 3:
+        print("Usage: python submit_aucell_jobs.py <rebuilt_chunks_directory> <regulons_csv>")
+        print("\nExample:")
+        print("  python submit_aucell_jobs.py /scratch/easmit31/GRN_copy/scenic/h5ad_files/gaba_adults_rebuilt /scratch/easmit31/GRN_copy/scenic/h5ad_files/gaba_allLv_regulons.csv")
         sys.exit(1)
     
     rebuilt_dir = sys.argv[1]
-    regulons_csv = "/scratch/easmit31/GRN_copy/scenic/h5ad_files/astros_allLv_regulons.csv"
+    regulons_csv = sys.argv[2]
     
+    # Verify inputs exist
+    if not os.path.isdir(rebuilt_dir):
+        print(f"ERROR: Rebuilt directory not found: {rebuilt_dir}")
+        sys.exit(1)
+    
+    if not os.path.isfile(regulons_csv):
+        print(f"ERROR: Regulons CSV not found: {regulons_csv}")
+        sys.exit(1)
+    
+    # Create output directory
     aucell_dir = rebuilt_dir.replace("_rebuilt", "_aucell")
     os.makedirs(aucell_dir, exist_ok=True)
     
     chunks = find_rebuilt_chunks(rebuilt_dir)
+    
+    if not chunks:
+        print(f"ERROR: No rebuilt chunks found in {rebuilt_dir}")
+        sys.exit(1)
+    
     print(f"Found {len(chunks)} rebuilt chunks to process")
+    print(f"Regulons CSV: {regulons_csv}")
+    print(f"Output directory: {aucell_dir}")
     
     job_ids = []
     

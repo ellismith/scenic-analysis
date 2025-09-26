@@ -3,10 +3,9 @@
 60_aucell_patched.py
 Run AUCell using pySCENIC 0.12.1 API correctly on AnnData.
 """
-
 import sys
 import pandas as pd
-import scanpy as sc
+import anndata as ad
 import scipy.sparse as sp
 from pyscenic.aucell import aucell
 from pyscenic.utils import GeneSignature
@@ -17,12 +16,12 @@ if len(sys.argv) != 4:
 expr_h5ad, regulons_csv, out_h5ad = sys.argv[1:]
 
 print("👉 Loading AnnData:", expr_h5ad, flush=True)
-adata = sc.read_h5ad(expr_h5ad, backed=None)
+adata = ad.read_h5ad(expr_h5ad)
+
 if not isinstance(adata.X, sp.csr_matrix):
     adata.X = sp.csr_matrix(adata.X)
 
 print("👉 Building expression DataFrame", flush=True)
-# Convert to DataFrame explicitly (cells as rows, genes as columns)
 ex_mtx = pd.DataFrame.sparse.from_spmatrix(
     adata.X,
     index=adata.obs_names,
@@ -40,7 +39,6 @@ for reg, group in df.groupby("regulon"):
     regulon_sigs.append(GeneSignature(name=reg, gene2weight={g: 1.0 for g in genes}))
 
 print(f"👉 Built {len(regulon_sigs)} regulon signatures", flush=True)
-
 print("👉 Running AUCell…", flush=True)
 scores = aucell(ex_mtx, regulon_sigs, num_workers=8)
 
