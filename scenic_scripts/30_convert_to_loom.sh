@@ -8,7 +8,7 @@
 
 
 module load mamba/latest
-PY=/scratch/easmit31/conda_envs/pyscenic/bin/python
+PY=/scratch/easmit31/conda_envs/pyscenic_final/bin/python
 PROJECT_DIR="/scratch/easmit31/GRN_copy/scenic/scenic_scripts"
 
 cd "$PROJECT_DIR" || { echo "Project dir not found"; exit 1; }

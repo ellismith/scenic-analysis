@@ -14,5 +14,5 @@ LOG_DIR="$PROJECT_DIR/logs"
 cd "$PROJECT_DIR" || { echo "Project dir not found: $PROJECT_DIR"; exit 1; }
 export PYTHONPATH="$PROJECT_DIR:$PYTHONPATH"
 
-echo "[\$(date)] Running: /scratch/easmit31/conda_envs/pyscenic/bin/python 10_select_cells.py \$@"
-/scratch/easmit31/conda_envs/pyscenic/bin/python 10_select_cells.py "$@"
+echo "[\$(date)] Running: /scratch/easmit31/conda_envs/pyscenic_final/bin/python 10_select_cells.py \$@"
+/scratch/easmit31/conda_envs/pyscenic_final/bin/python 10_select_cells.py "$@"
