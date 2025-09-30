@@ -11,11 +11,11 @@ set -euo pipefail
 set -x
 
 # pySCENIC environment
-export PATH="/scratch/easmit31/conda_envs/pyscenic/bin:$PATH"
-PYS=/scratch/easmit31/conda_envs/pyscenic/bin/pyscenic
+PYTHON=/scratch/easmit31/conda_envs/pyscenic_final/bin/python
 PROJECT_DIR="/scratch/easmit31/GRN_copy/scenic/scenic_scripts"
+
 cd "$PROJECT_DIR" || { echo "Project dir not found"; exit 1; }
 export PYTHONPATH="$PROJECT_DIR:$PYTHONPATH"
 
-# Run ctx, forwarding all arguments
-$PYS ctx "$@"
+# Call the Python wrapper which handles glob expansion
+"$PYTHON" 50_run_ctx.py "$@"

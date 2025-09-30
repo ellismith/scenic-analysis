@@ -1,4 +1,4 @@
-#!/scratch/easmit31/conda_envs/pyscenic/bin/python
+#!/scratch/easmit31/conda_envs/pyscenic_final/bin/python
 
 import argparse
 import datetime
