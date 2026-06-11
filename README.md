@@ -1,5 +1,5 @@
 # SCENIC Gene Regulatory Network Analysis Pipeline
-## Snyder Lab | ASU | Macaque Brain Aging
+## Macaque Brain Aging
  
 Pipeline for inferring transcription factor gene regulatory networks (GRNs) from single-nucleus RNA-seq data using [pySCENIC](https://pyscenic.readthedocs.io/), applied to adult rhesus macaque brain across 11 regions and multiple cell types.
  
