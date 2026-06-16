@@ -1,0 +1,22 @@
+name: pyscenic_final
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.10
+  - numpy=1.23.5
+  - pandas=1.5.3
+  - scikit-learn=1.2.2
+  - pyarrow=11.0.0
+  - dask=2023.3.2
+  - distributed=2023.3.2
+  - numba=0.57.1
+  - scipy=1.10.1
+  - loompy=3.0.6
+  - statsmodels
+  - pip
+  - pip:
+    - pyscenic==0.12.1
+    - anndata==0.10.9
+    - scanpy==1.9.8
